@@ -220,7 +220,7 @@ class CuDNNDeconvolutionOp {
           grad_ptr + out_offset_ * g,
           in_desc_,
           data_ptr + data_offset_ * g,
-          back_conv_desc_,
+          back_conv_desc_w_,
           back_algo_w_.AlgoNumber(),
           workspace.dptr_,
           workspace_size,
@@ -806,18 +806,15 @@ class CuDNNDeconvolutionOp {
   cudnnTensorDescriptor_t out_desc_;
   cudnnTensorDescriptor_t bias_desc_;
   cudnnFilterDescriptor_t filter_desc_;
-  // Convolution descriptor for "forward" inference operation.
+  // Convolution descriptor for forward inference operation.
   // Note that in deconvolution, the forward operation is handled
   // by the cuDNN backprop-to-data kernel.
   cudnnConvolutionDescriptor_t forward_conv_desc_;
-  // Convolution descriptor for "back-prop" operations to data .
+  // Convolution descriptor for back-prop operations to the data.
   // Note that in deconvolution, the backprop-to-data operation is handled
   // by the cuDNN forward kernel.
   cudnnConvolutionDescriptor_t back_conv_desc_;
-  // Convolution descriptor for "back-prop" operations to filter.
-  // Note that in deconvolution, the backprop-to-data operation is handled
-  // by the backprop-to-filter kernel (so consistent with the treatment
-  // in convolution).
+  // Convolution descriptor for back-prop operations to the weights
   cudnnConvolutionDescriptor_t back_conv_desc_w_;
   // Algorithm for the cuDNN forward kernel (used in gradient backprop to input)
   CuDNNAlgo<cudnnConvolutionFwdAlgo_t> forward_algo_;
